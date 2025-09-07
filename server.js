@@ -1,13 +1,11 @@
+import './config.js';
 import express from 'express';
-import env from 'dotenv';
 import cors from 'cors';
 import http from "http";
 import { connectDB } from './lib/db.js';
 import userRouter from './routes/userRoutes.js';
 import messageRouter from './routes/messageRoutes.js';
 import {Server} from "socket.io";
-
-env.config();
 
 //HTTP server setup
 const app = express();

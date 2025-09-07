@@ -75,23 +75,43 @@ export const Login = async (req, res) => {
 
 //controller to check if user is authenticated
 export const checkAuth = async (req, res) => {
-    res.json({success: true, user: req.user});
+    try {
+        if (!req.user) {
+            return res.status(401).json({ success: false, message: "Unauthorized" });
+        }
+
+        res.json({ success: true, user: req.user });
+    } catch (error) {
+        res.status(500).json({ success: false, message: "Internal server error", error: error.message });
+    }
 }
 
 //controller to get user profile details
-export const updateProfile = async(req,res) => {
+export const updateProfile = async (req, res) => {
+    console.log("Update profile request received");
     try {
         const { fullName, profilePic, bio } = req.body;
 
         const userId = req.user._id;
-        let updatedUser;
+        let updateFields = { fullName, bio };
 
-        if(!profilePic){
-            updatedUser = await User.findByIdAndUpdate(userId, {fullName, bio}, {new : true})
-        } else {
-            const upload = cloudinary.uploader.upload(profilePic);
+        if (profilePic) {
+            // Await is required here
+            const upload = await cloudinary.uploader.upload(profilePic);
+            updateFields.profilePic = upload.secure_url;
+        }
 
-            updatedUser = await User.findByIdAndUpdate(userId, {profilePic: upload.secure_url, bio, fullName}, {new: true});
+        const updatedUser = await User.findByIdAndUpdate(
+            userId,
+            updateFields,
+            { new: true }
+        );
+        
+        if (!updatedUser) {
+            return res.status(404).json({
+                success: false,
+                message: "User not found",
+            });
         }
 
         res.status(200).json({
@@ -99,6 +119,8 @@ export const updateProfile = async(req,res) => {
             userData: updatedUser,
             message: "Profile updated successfully"
         });
+
+        console.log("Profile updated successfully:", updatedUser);
 
     } catch (error) {
         console.error("Error updating profile:", error);
