@@ -11,9 +11,11 @@ const messageSchmea = new mongoose.Schema({
         ref: "User",
         required: true
     },
+    text:{
+        type: String,
+    },
     image:{
         type: String,
-        required: true
     },
     seen:{
         type: Boolean,

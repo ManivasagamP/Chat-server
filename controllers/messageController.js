@@ -8,8 +8,8 @@ export const getUsersForSidebar = async (req, res) => {
     try {
         const userId = req.user._id;
         const filteredUsers = await User.find({
-            _id: {$ne: userId}.select("-password")
-        });
+            _id: {$ne: userId}
+        }).select("-password")
 
         //count number of messages for each user
         let unseenMessages = {};
@@ -27,7 +27,7 @@ export const getUsersForSidebar = async (req, res) => {
         await Promise.all(promises);
         res.status(200).json({success: true, users: filteredUsers, unseenMessages});
     } catch (error) {
-        console.log(error.message);
+        console.log("error da ",error.message);
         res.json({success: false, message: "Internal Server Error", error:error.message})
     }
 }
@@ -78,6 +78,7 @@ export const markMessageAsSeen = async (req, res) => {
 //send message to a user
 export const sendMessage = async (req,res) => {
     try {
+        console.log("inside send message controller")
         const {text, image} = req.body;
         const receiverId = req.params.id;
         const senderId = req.user._id;
