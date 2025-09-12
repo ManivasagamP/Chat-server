@@ -14,7 +14,7 @@ const server = http.createServer(app);
 // Socket.io server setup
 export const io = new Server(server, {
   cors: {
-    origin: ["https://chat-client-iota-lac.vercel.app/"],
+    origin: ["https://chat-client-iota-lac.vercel.app"],
     methods: ["GET", "POST"]
   },
   transports: ["websocket", "polling"], // ✅ force upgrade
@@ -42,7 +42,7 @@ io.on("connection",(socket)=>{
 
 // Middleware setup
 app.use(cors({
-  origin: ["https://chat-client-iota-lac.vercel.app/"], // ✅ your Vercel URL
+  origin: ["https://chat-client-iota-lac.vercel.app"], // ✅ your Vercel URL
   methods: ["GET", "POST", "PUT", "DELETE"],
   credentials: true
 }));
