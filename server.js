@@ -48,11 +48,19 @@ app.use('/api/status',(req, res)=> {
 app.use("/api/auth",userRouter);
 app.use("/api/messages", messageRouter)
 
-// Connect to MongoDB
-await connectDB();
+// port
+const PORT = process.env.PORT;
 
-// Start the server
-const PORT = process.env.PORT || 3000;
-server.listen(PORT, () => {
-    console.log(`Server is running on port ${PORT}`);
-});
+async function start() {
+  try {
+    await connectDB(); // ensure your lib/db.js uses process.env.MONGODB_URI
+    server.listen(PORT, () => {
+      console.log(`🚀 Server listening on port ${PORT}`);
+    });
+  } catch (err) {
+    console.error('Failed to start server', err);
+    process.exit(1);
+  }
+}
+
+start();
